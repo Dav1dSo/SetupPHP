@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .  
+    container_name: mini_ecommerce_php
+    ports:
+      - "80:80"   
+    volumes:
+      - .:/var/www/html   
+    environment:
+      - PHP_ENV=development
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=mini_ecommerce
+      - DB_USER=root
+      - DB_PASS=password
+    depends_on:
+      - db   
+    networks:
+      - mini_ecommerce_network
+
+  db:
+    image: mysql:5.7
+    container_name: mini_ecommerce_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mini_ecommerce
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"   
+    volumes:
+      - mysql_data:/var/lib/mysql  
+    networks:
+      - mini_ecommerce_network
+
+volumes:
+  mysql_data:
+
+networks:
+  mini_ecommerce_network:
+    driver: bridge
