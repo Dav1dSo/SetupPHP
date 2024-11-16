@@ -1,17 +1,25 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    require_once '../../../factory.php';
+    require_once '.././login/repository/UserRepository.php';
 
-    // Lógica simples de autenticação (isso é só um exemplo)
-    if ($username === 'admin' && $password === 'password') {
-        header('Location: dashboard.php'); 
-        exit;
-    } else {
-        $error_message = "Usuário ou senha inválidos.";
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        $pdo = DatabaseFactory::getConnection();
+
+        $userRepository = new UserRepository($pdo);
+
+        $user = $userRepository->getUserByUsername($username);
+
+        if ($user && password_verify($password, $user['password'])) {
+            header('Location: home.php');
+            exit;
+        } else {
+            $error_message = "Usuário ou senha inválidos.";
+        }
     }
-}
 ?>
 
 <!DOCTYPE html>
@@ -77,11 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#">Mini E-commerce</a>
-        </nav>
-    </header>
+    <?php include_once 'header.php'; ?>
 
     <div class="container mt-5">
         <h2 class="text-center">Login</h2>
@@ -99,13 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="error-message"><?php echo $error_message; ?></div>
             <?php } ?>
 
+            <a href="register.php" class="btn btn-link d-block mx-auto">Criar conta</a>
+
             <button type="submit" class="btn btn-primary">Entrar</button>
         </form>
     </div>
 
-    <footer>
-        <p>&copy; 2024 Mini E-commerce - Todos os direitos reservados</p>
-    </footer>
+    <?php include_once 'footer.php'; ?>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

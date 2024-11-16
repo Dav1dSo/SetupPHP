@@ -1,43 +1,36 @@
-// src/Factory/Database.php
 <?php
 
 namespace Factory;
 
+require_once 'vendor/autoload.php'; 
+
 use PDO;
+use PDOException;
 use Dotenv\Dotenv;
 
-class Database
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+class DatabaseFactory
 {
-    private static $instance;
+    private static $pdo = null;
 
-    private function __construct() {}
-    private function __clone() {}
-
-    public static function getConnection(): PDO
+    public static function getConnection()
     {
-        if (!self::$instance) {
-            // Carregar variáveis de ambiente
-            $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-            $dotenv->load();
-
-            // Obter os dados do .env
-            $host = $_ENV['DB_HOST'];
-            $port = $_ENV['DB_PORT'];
-            $dbname = $_ENV['DB_NAME'];
-            $user = $_ENV['DB_USER'];
-            $password = $_ENV['DB_PASS'];
-
-            // Criar a conexão PDO
-            $dsn = "mysql:host=$host;port=$port;dbname=$dbname";
+        if (self::$pdo === null) {
             try {
-                self::$instance = new PDO($dsn, $user, $password);
-                self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                self::$instance->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                $host = getenv('DB_HOST');
+                $db = getenv('DB_NAME');
+                $user = getenv('DB_USER');
+                $pass = getenv('DB_PASS');
+
+                self::$pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
                 die("Erro ao conectar ao banco de dados: " . $e->getMessage());
             }
         }
 
-        return self::$instance;
+        return self::$pdo;
     }
 }
