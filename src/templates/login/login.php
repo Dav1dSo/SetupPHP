@@ -71,14 +71,14 @@
         }
 
         footer {
-            position: fixed;
+            margin-top: 1%;
             bottom: 0;
             left: 0;
             right: 0;
             background-color: #333;
             color: white;
             text-align: center;
-            padding: 10px 0;
+            padding: 15px 0;
         }
 
     </style>
@@ -111,7 +111,6 @@
 
     <?php include_once 'footer.php'; ?>
     
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

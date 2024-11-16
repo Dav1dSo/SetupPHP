@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         footer {
-            position: fixed;
+            margin-top: 1%;
             bottom: 0;
             left: 0;
             right: 0;
